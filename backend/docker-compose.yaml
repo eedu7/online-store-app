@@ -1,0 +1,11 @@
+services:
+  database:
+    image: postgres:18.3-alpine3.23
+    env_file: .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - database-data:/var/lib/postgresql/data
+
+volumes:
+  database-data:
