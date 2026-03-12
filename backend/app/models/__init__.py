@@ -1,3 +1,5 @@
 from core.database import DBBase
 
-__all__ = ["DBBase"]
+from .user import DBUser
+
+__all__ = ["DBBase", "DBUser"]
