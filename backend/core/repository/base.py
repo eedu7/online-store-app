@@ -1,9 +1,11 @@
 from typing import Any, Dict, Generic, List, Type, TypeVar
 from uuid import UUID
 
-from sqlalchemy.orm import DeclarativeMeta, Session
+from sqlalchemy.orm import Session
 
-T = TypeVar("T", bound=DeclarativeMeta)
+from core.database import DBBase
+
+T = TypeVar("T", bound=DBBase)
 
 
 class BaseRepository(Generic[T]):
@@ -11,23 +13,23 @@ class BaseRepository(Generic[T]):
         self.model = model
         self.db = db
 
-    def get_by_id(self, id: UUID) -> T | None:
+    async def get_by_id(self, id: UUID) -> T | None:
         raise NotImplementedError
 
-    def get_all(self, skip: int = 0, limit: int = 20) -> List[T]:
+    async def get_all(self, skip: int = 0, limit: int = 20) -> List[T]:
         raise NotImplementedError
 
-    def get_by_filters(self, filters: Dict[str, Any]) -> List[T]:
+    async def get_by_filters(self, filters: Dict[str, Any]) -> List[T]:
         raise NotImplementedError
 
-    def get_one_by_filters(self, filters: Dict[str, Any]) -> T | None:
+    async def get_one_by_filters(self, filters: Dict[str, Any]) -> T | None:
         raise NotImplementedError
 
-    def create(self, obj_in: Dict[str, Any]) -> T:
+    async def create(self, obj_in: Dict[str, Any]) -> T:
         raise NotImplementedError
 
-    def update(self, id: UUID, obj_in: Dict[str, Any]) -> T | None:
+    async def update(self, id: UUID, obj_in: Dict[str, Any]) -> T | None:
         raise NotImplementedError
 
-    def delete(self, id: UUID) -> bool:
+    async def delete(self, id: UUID) -> bool:
         raise NotImplementedError
