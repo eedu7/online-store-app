@@ -24,7 +24,7 @@ class Config(BaseSettings):
 
     DB_POOL_SIZE: int = 5
     DB_POOL_RECYCLE: int = 3600
-    DB_POOL_PRE_PINT: bool = True
+    DB_POOL_PRE_PING: bool = True
     DB_MAX_OVERFLOW: int = 10
 
     @computed_field
