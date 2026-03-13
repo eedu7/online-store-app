@@ -2,6 +2,7 @@ from typing import Generic, Type, TypeVar
 from uuid import UUID
 
 from core.database import DBBase
+from core.exceptions import NotFoundException
 from core.repository import BaseRepository
 
 T = TypeVar("T", bound=DBBase)
@@ -15,5 +16,5 @@ class BaseController(Generic[T]):
     async def get_by_id(self, id: UUID) -> T:
         db_obj = await self.repository.get_by_id(id)
         if db_obj is None:
-            raise Exception
+            raise NotFoundException()
         return db_obj
