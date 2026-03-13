@@ -39,10 +39,11 @@ class BaseRepository(Generic[T]):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def create(self, obj_in: T) -> T:
-        self.session.add(obj_in)
-        await self.session.refresh(obj_in)
-        return obj_in
+    async def create(self, obj_in: Dict[str, Any]) -> T:
+        db_obj = self.model(**obj_in)
+        self.session.add(db_obj)
+        await self.session.refresh(db_obj)
+        return db_obj
 
     async def update(self, db_obj: T, obj_in: Dict[str, Any]) -> T | None:
         for key, value in obj_in.items():
