@@ -5,5 +5,5 @@ from core.repository import BaseRepository
 
 
 class UserRepository(BaseRepository[DBUser]):
-    def __init__(self, db: AsyncSession) -> None:
-        super().__init__(DBUser, db)
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(DBUser, session)
