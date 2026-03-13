@@ -1,0 +1,149 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  GREETING: Hello, world!
+
+tasks:
+  default:
+    desc: Print a greeting message
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  # Development
+  dev:
+    desc: Run development server with hot reload
+    cmds:
+      - uv run fastapi dev main.py
+
+  # Production
+  prod:
+    desc: Run production server
+    cmds:
+      - uv run fastapi run main.py
+
+  # Testing
+  test:
+    desc: Run all tests
+    cmds:
+      - uv run pytest
+
+  test:watch:
+    desc: Run tests in watch mode
+    cmds:
+      - uv run pytest-watch
+
+  test:cov:
+    desc: Run tests with coverage report
+    cmds:
+      - uv run pytest --cov={{.PYTHON_DIRS}} --cov-report=html --cov-report=term
+
+  test:verbose:
+    desc: Run tests with verbose output
+    cmds:
+      - uv run pytest -vv
+
+  test:failed:
+    desc: Run only failed tests
+    cmds:
+      - uv run pytest --lf
+
+  # Code Quality
+  format:
+    desc: Format code with ruff
+    cmds:
+      - uv run ruff format .
+
+  format:check:
+    desc: Check code formatting without making changes
+    cmds:
+      - uv run ruff format --check
+
+  lint:
+    desc: Lint code with ruff
+    cmds:
+      - uv run ruff check .
+
+  lint:fix:
+    desc: Lint and auto-fix issue
+    cmds:
+      - uv run ruff check --fix .
+
+  check:
+    desc: Run all code quality checks (format, lint)
+    cmds:
+      - task: format:check
+      - task: lint
+
+  fix:
+    desc: Auto-fix all fixable issues (format + lint fix)
+    cmds:
+      - task: format
+      - task: lint:fix
+
+  # Database (Alembic)
+  db:migrate:
+    desc: Run databas migrations
+    cmds:
+      - uv run alembic upgrade head
+
+  db:rollback:
+    desc: Rollback last migration
+    cmds:
+      - uv run alembic downgrade -1
+
+  db:revision:
+    desc: Create a new migration (use -- -m "message")
+    cmds:
+      - uv run alembic revision --autogenerate {{.CLI_ARGS}}
+
+  db:history:
+    desc: Show migration history
+    cmds:
+      - uv run alembic history
+
+  db:current:
+    desc: Show current migration version
+    cmds:
+      - uv run alembic current
+
+  db:reset:
+    desc: Reset database to base (WARNING DESTRUCTIVE)
+    cmds:
+      - uv run alembic downgrade base
+      - uv run alembic upgrade head
+
+  # Dependencies
+  install:
+    desc: Install all dependencies
+    cmds:
+      - uv sync
+
+  install:dev:
+    desc: Install development dependencies
+    cmds:
+      - uv sync --all-extras
+
+  update:
+    desc: Update dependencies
+    cmds:
+      - uv lock --upgrade
+
+  # Container
+  docker:run:
+    desc: Run Docker container
+    cmds:
+      - docker-compose up -d
+
+  # Quick start
+  setup:
+    desc: Initial project setup
+    cmds:
+      - task: install:dev
+      - task: docker:run
+      - task: db:migrate
+      - echo "Setup complete!"
+      - echo "Run 'task dev' to start development server"
+      - echo "Run 'task prod' to start production server"
