@@ -12,7 +12,7 @@ class UserRegisterRequest(BaseModel):
         min_length=3,
         max_length=30,
         description="Unique username",
-        examples=["john.doe"],
+        examples=["john_doe"],
     )
     password: str = Field(
         ..., min_length=8, description="Strong password", examples=["SecurePass123!"]
@@ -47,6 +47,6 @@ class UserLoginRequest(BaseModel):
     username_or_email: str = Field(
         ...,
         description="Username or email address",
-        examples=["john.doe", "john.doe@example.com"],
+        examples=["john_doe", "john.doe@example.com"],
     )
     password: str = Field(..., description="User password", examples=["SecurePass123!"])
