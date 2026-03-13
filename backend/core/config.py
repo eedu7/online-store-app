@@ -21,11 +21,14 @@ class Config(BaseSettings):
     POSTGRES_DB: str = "my_db"
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "password@123"
-
     DB_POOL_SIZE: int = 5
     DB_POOL_RECYCLE: int = 3600
     DB_POOL_PRE_PING: bool = True
     DB_MAX_OVERFLOW: int = 10
+
+    # Pagination
+    DEFAULT_PAGE_SIZE: int = 20
+    MAX_PAGE_SIZE: int = 100
 
     @computed_field
     @property
