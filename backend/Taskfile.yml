@@ -71,11 +71,17 @@ tasks:
     cmds:
       - uv run ruff check --fix .
 
+  type:
+    desc: Run type checking with ty
+    cmds:
+      - uv run ty check {{.PYTHON_DIRS}}
+
   check:
     desc: Run all code quality checks (format, lint)
     cmds:
       - task: format:check
       - task: lint
+      - task: type
 
   fix:
     desc: Auto-fix all fixable issues (format + lint fix)
