@@ -1,7 +1,7 @@
 from typing import Any, Dict, Generic, List, Type, TypeVar
 from uuid import UUID
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import DBBase
 
@@ -9,12 +9,12 @@ T = TypeVar("T", bound=DBBase)
 
 
 class BaseRepository(Generic[T]):
-    def __init__(self, model: Type[T], db: Session) -> None:
+    def __init__(self, model: Type[T], session: AsyncSession) -> None:
         self.model = model
-        self.db = db
+        self.session = session
 
     async def get_by_id(self, id: UUID) -> T | None:
-        raise NotImplementedError
+        return await self.session.get(self.model, id)
 
     async def get_all(self, skip: int = 0, limit: int = 20) -> List[T]:
         raise NotImplementedError
