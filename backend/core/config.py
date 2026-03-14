@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import PostgresDsn, computed_field
+from pydantic import Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,6 +29,13 @@ class Config(BaseSettings):
     # Pagination
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100
+
+    # Password Hashing (Argon2id)
+    PASSWORD_TIME_COST: int = Field(2, description="Number of iterations")
+    PASSWORD_MEMORY_COST: int = Field(65536, description="64 MiB in KiB")
+    PASSWORD_PARALLELISM: int = Field(4, description="Number of threads")
+    PASSWORD_HASH_LENGTH: int = Field(32, description="Hash length in bytes")
+    PASSWORD_SALT_LENGTH: int = Field(16, description="Salt length in bytes")
 
     @computed_field
     @property

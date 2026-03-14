@@ -7,22 +7,24 @@ from argon2.exceptions import (
     VerifyMismatchError,
 )
 
+from core.config import config
+
 
 class PasswordService:
     def __init__(
         self,
-        time_cost: int = 2,
-        memory_cost: int = 65536,  # 64 MiB
-        parallelism: int = 4,
-        hash_len: int = 32,
-        salt_len: int = 16,
+        time_cost: int | None = None,
+        memory_cost: int | None = None,  # 64 MiB
+        parallelism: int | None = None,
+        hash_len: int | None = None,
+        salt_len: int | None = None,
     ) -> None:
         self._hasher = PasswordHasher(
-            time_cost=time_cost,
-            memory_cost=memory_cost,
-            parallelism=parallelism,
-            hash_len=hash_len,
-            salt_len=salt_len,
+            time_cost=time_cost or config.PASSWORD_TIME_COST,
+            memory_cost=memory_cost or config.PASSWORD_MEMORY_COST,
+            parallelism=parallelism or config.PASSWORD_PARALLELISM,
+            hash_len=hash_len or config.PASSWORD_HASH_LENGTH,
+            salt_len=salt_len or config.PASSWORD_SALT_LENGTH,
         )
 
     def hash_password(self, password: str) -> str:
