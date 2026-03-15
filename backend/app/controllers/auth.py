@@ -1,6 +1,8 @@
 from app.models import DBUser
 from app.repositories import UserRepository
 from app.schemas.requests.auth import UserLoginRequest, UserRegisterRequest
+from app.schemas.responses.auth import AuthResponse
+from app.schemas.responses.user import UserResponse
 from core.controller import BaseController
 from core.exceptions import DuplicateValueException, UnauthorizedException
 from core.security import password_service
@@ -12,7 +14,7 @@ class AuthController(BaseController[DBUser]):
         super().__init__(DBUser, repository)
         self.repository = repository
 
-    async def register(self, payload: UserRegisterRequest) -> DBUser:
+    async def register(self, payload: UserRegisterRequest) -> AuthResponse:
 
         if self.repository.get_by_email(payload.email):
             raise DuplicateValueException(
@@ -38,9 +40,14 @@ class AuthController(BaseController[DBUser]):
             }
         )
         await self.commit()
-        return user
 
-    async def login(self, payload: UserLoginRequest):
+        token_pair = jwt_service.build_token_pair(
+            str(user.id), extra_claims={"username": user.username, "email": user.email}
+        )
+
+        return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
+
+    async def login(self, payload: UserLoginRequest) -> AuthResponse:
         user = await self.repository.get_by_username_or_email(payload.username_or_email)
 
         if user is None:
@@ -55,6 +62,8 @@ class AuthController(BaseController[DBUser]):
                 message="Invalid credentials", error_code="INVALID_CREDENTIALS"
             )
 
-        return jwt_service.build_token_pair(
+        token_pair = jwt_service.build_token_pair(
             str(user.id), extra_claims={"username": user.username, "email": user.email}
         )
+
+        return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
