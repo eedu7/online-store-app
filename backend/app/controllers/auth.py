@@ -2,8 +2,9 @@ from app.models import DBUser
 from app.repositories import UserRepository
 from app.schemas.requests.auth import UserLoginRequest, UserRegisterRequest
 from core.controller import BaseController
-from core.exceptions import DuplicateValueException
+from core.exceptions import DuplicateValueException, UnauthorizedException
 from core.security import password_service
+from core.security.jwt import jwt_service
 
 
 class AuthController(BaseController[DBUser]):
@@ -40,4 +41,20 @@ class AuthController(BaseController[DBUser]):
         return user
 
     async def login(self, payload: UserLoginRequest):
-        pass
+        user = await self.repository.get_by_username_or_email(payload.username_or_email)
+
+        if user is None:
+            raise UnauthorizedException(
+                message="Invalid credentials", error_code="INVALID_CREDENTIALS"
+            )
+
+        if user.password and not password_service.verify_password(
+            user.password, payload.password
+        ):
+            raise UnauthorizedException(
+                message="Invalid credentials", error_code="INVALID_CREDENTIALS"
+            )
+
+        return jwt_service.build_token_pair(
+            str(user.id), extra_claims={"username": user.username, "email": user.email}
+        )
