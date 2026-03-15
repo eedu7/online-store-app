@@ -14,7 +14,7 @@ class PasswordService:
     def __init__(
         self,
         time_cost: int | None = None,
-        memory_cost: int | None = None,  # 64 MiB
+        memory_cost: int | None = None,
         parallelism: int | None = None,
         hash_len: int | None = None,
         salt_len: int | None = None,

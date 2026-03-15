@@ -9,11 +9,7 @@ router = APIRouter()
 
 @router.post("/register")
 async def register(payload: UserRegisterRequest, controller: AuthControllerDep):
-    return await controller.regsiter(payload)
-    raise NotImplementedException(
-        message="User registration is not yet implemented",
-        error_code="REGISTER_NOT_IMPLEMENTED",
-    )
+    return await controller.register(payload)
 
 
 @router.post("/login")
