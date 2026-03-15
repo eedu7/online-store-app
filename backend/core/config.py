@@ -38,7 +38,7 @@ class Config(BaseSettings):
     PASSWORD_SALT_LENGTH: int = Field(16, description="Salt length in bytes")
 
     # JWT
-    JWT_SECRET_KEY: SecretStr = Field(
+    JWT_SECRET_KEY: str = Field(
         ...,
         description="HMAC secret key used to sign and verify tokens. Generate with: openssl rand -hex 32",
     )
@@ -83,4 +83,4 @@ class Config(BaseSettings):
     )
 
 
-config = Config()
+config = Config()  # type: ignore
