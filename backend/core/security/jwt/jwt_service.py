@@ -1,132 +1,28 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Literal
+from typing import Any, Dict
 from uuid import uuid4
 
 import jwt
 from jwt.exceptions import (
     DecodeError,
     ExpiredSignatureError,
+    ImmatureSignatureError,
     InvalidAlgorithmError,
     InvalidAudienceError,
     InvalidIssuerError,
     InvalidSignatureError,
     MissingRequiredClaimError,
 )
-from pydantic import BaseModel, Field
 
 from core.config import config
-from core.exceptions import (
-    InternalServerException,
-    NotFoundException,
-    UnauthorizedException,
+from core.exceptions import InternalServerException
+from core.security.jwt.jwt_exceptions import (
+    InvalidTokenException,
+    InvalidTokenTypeException,
+    MissingTokenException,
+    TokenExpiredException,
 )
-
-JWTType = Literal["access", "refresh"]
-
-
-class JWTPair(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
-    expires_in: int  # access token TTL in seconds
-
-
-class JWTPayload(BaseModel):
-    sub: str
-    type: JWTType
-    jti: str
-    iat: datetime
-    exp: datetime
-    nbf: datetime | None = None
-    iss: str | None = None
-    aud: str | None = None
-    extra: Dict[str, Any] = Field(default_factory=dict)
-
-
-class TokenExpiredException(UnauthorizedException):
-    """
-    Raised when a JWT token's 'exp' claim is in the past.
-
-    HTTP Status: 401 Unauthorized
-    """
-
-    def __init__(
-        self, message: str = "Token has expired", headers: Dict[str, str] | None = None
-    ) -> None:
-        super().__init__(message=message, error_code="TOKEN_EXPIRED", headers=headers)
-
-
-class InvalidTokenException(UnauthorizedException):
-    """
-    Raised when a JWT fails signature verification, cannot be decoded,
-    has an invalid issuer/audience, or is structurally malformed.
-
-    HTTP Status: 401 Unauthorized
-    """
-
-    def __init__(
-        self,
-        message: str = "Invalid token",
-        headers: Dict[str, str] | None = None,
-        details: Dict[str, Any] | None = None,
-    ) -> None:
-        super().__init__(
-            message=message,
-            error_code="INVALID_TOKEN",
-            headers=headers,
-            details=details,
-        )
-
-
-class MissingTokenException(UnauthorizedException):
-    """
-    Raised when no token is present in the request.
-
-    HTTP Status: 401 Unauthorized
-    """
-
-    def __init__(
-        self,
-        message: str = "Authentication token is missing",
-        headers: Dict[str, str] | None = None,
-    ) -> None:
-        super().__init__(message=message, error_code="MISSING_TOKEN", headers=headers)
-
-
-class TokenRevokedException(UnauthorizedException):
-    """
-    Raised when the token's 'jti' is found in the revocation store.
-
-    HTTP Status: 401 Unauthorized
-    """
-
-    def __init__(
-        self,
-        message: str = "Token has been revoked",
-        headers: Dict[str, str] | None = None,
-    ) -> None:
-        super().__init__(message=message, error_code="TOKEN_REVOKED", headers=headers)
-
-
-class InvalidTokenTypeException(UnauthorizedException):
-    """
-    Raised when a token of the wrong type is presented (e.g. a refresh token used where an access token is required).
-
-    HTTP Status: 401 Unauthorized
-    """
-
-    def __init__(
-        self,
-        expected: JWTType,
-        received: JWTType,
-        headers: Dict[str, str] | None = None,
-    ) -> None:
-        super().__init__(
-            message=f"Invalid token type: Expected '{expected}, got '{received}')",
-            error_code="INVALID_TOKEN_TYPE",
-            headers=headers,
-            details={"expected": expected, "received": received},
-        )
+from core.security.jwt.jwt_schemas import JWTPair, JWTPayload, JWTType
 
 
 class JWTService:
@@ -160,7 +56,7 @@ class JWTService:
     ) -> JWTPayload:
         if not token or not token.strip():
             # raise MissingTokenException
-            raise NotFoundException()
+            raise MissingTokenException()
 
         raw_payload = self._decode_jwt(token=token, verify_exp=verify_exp)
         payload = self._build_payload(raw_payload)
@@ -186,7 +82,7 @@ class JWTService:
         )
 
     def revoke_token(self, jti: str) -> None:
-        # TODO:
+        # TODO: Revoke Token
         raise NotImplementedError("revoke_token: wire up a Redis/DB revocation store")
 
     def revoke_token_by_raw(self, token: str) -> None:
@@ -276,10 +172,14 @@ class JWTService:
             raise InvalidTokenException(
                 message="Token could not be decoded - it may be malformed"
             ) from exc
+        except ImmatureSignatureError as exc:
+            raise InvalidTokenException(
+                message="Token is not yet valid (nbf claim)"
+            ) from exc
         except Exception as exc:
             raise InternalServerException(
                 message="Token validation encountered an unexpected error",
-                detail={"reason": str(exc)},
+                details={"reason": str(exc)},
             ) from exc
 
     def _build_payload(self, raw: Dict[str, Any]) -> JWTPayload:
@@ -307,3 +207,6 @@ class JWTService:
             raise InvalidTokenException(
                 message=f"Token payload is malformed: {exc}"
             ) from exc
+
+
+jwt_service = JWTService()

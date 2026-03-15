@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import Field, PostgresDsn, SecretStr, computed_field
+from pydantic import Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
