@@ -39,7 +39,7 @@ class Config(BaseSettings):
 
     # JWT
     JWT_SECRET_KEY: str = Field(
-        ...,
+        "YOUR_JWT_SECRET_KEY",
         description="HMAC secret key used to sign and verify tokens. Generate with: openssl rand -hex 32",
     )
     JWT_ALGORITHM: str = Field(
