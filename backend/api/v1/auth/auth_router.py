@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.schemas.auth import UserLoginRequest, UserRegisterRequest
+from app.schemas.requests.auth import UserLoginRequest, UserRegisterRequest
 from core.dependencies.auth import auth_required
 from core.dependencies.controllers import AuthControllerDep
 from core.exceptions import NotImplementedException
@@ -15,9 +15,7 @@ async def register(payload: UserRegisterRequest, controller: AuthControllerDep):
 
 @router.post("/login")
 async def login(payload: UserLoginRequest, controller: AuthControllerDep):
-    raise NotImplementedException(
-        message="User login is not yet implemented", error_code="LOGIN_NOT_IMPLEMENTED"
-    )
+    return await controller.login(payload)
 
 
 @router.post("/logout", dependencies=[Depends(auth_required)])

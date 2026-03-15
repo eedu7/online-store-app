@@ -1,6 +1,6 @@
 from app.models import DBUser
 from app.repositories import UserRepository
-from app.schemas.auth import UserLoginRequest, UserRegisterRequest
+from app.schemas.requests.auth import UserLoginRequest, UserRegisterRequest
 from core.controller import BaseController
 from core.exceptions import DuplicateValueException
 from core.security import password_service
