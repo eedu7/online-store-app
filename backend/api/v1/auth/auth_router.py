@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.schemas.auth import UserLoginRequest, UserRegisterRequest
+from core.dependencies.auth import auth_required
 from core.dependencies.controllers import AuthControllerDep
 from core.exceptions import NotImplementedException
 
@@ -19,7 +20,7 @@ async def login(payload: UserLoginRequest, controller: AuthControllerDep):
     )
 
 
-@router.post("/logout")
+@router.post("/logout", dependencies=[Depends(auth_required)])
 async def logout(controller: AuthControllerDep):
     raise NotImplementedException(
         message="User logout is not yet implemented",
