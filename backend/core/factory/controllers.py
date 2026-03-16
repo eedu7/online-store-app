@@ -1,14 +1,8 @@
-from typing import Annotated
-
-from fastapi import Depends
-
-from app.controllers import AuthController, UserController
-from app.repositories import UserRepository
-from core.factory.repositories import RepositoryFactory
-
-UserRepositoryDep = Annotated[
-    UserRepository, Depends(RepositoryFactory.get_user_repository)
-]
+from app.controllers import AuthController, RoleController, UserController
+from core.factory.repositories import (
+    RoleRepositoryDep,
+    UserRepositoryDep,
+)
 
 
 class ControllerFactory:
@@ -19,3 +13,7 @@ class ControllerFactory:
     @staticmethod
     def get_auth_controller(repository: UserRepositoryDep) -> AuthController:
         return AuthController(repository=repository)
+
+    @staticmethod
+    def get_role_controller(repository: RoleRepositoryDep) -> RoleController:
+        return RoleController(repository=repository)
