@@ -1,8 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, List
+
 from sqlalchemy import Boolean, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.database import DBBase
 from core.database.mixins import PrimaryKeyMixin, TimestampMixin
+
+if TYPE_CHECKING:
+    from .user_role import DBUserRole
 
 
 class DBUser(DBBase, PrimaryKeyMixin, TimestampMixin):
@@ -20,7 +27,7 @@ class DBUser(DBBase, PrimaryKeyMixin, TimestampMixin):
     first_name: Mapped[str] = mapped_column(String(64), nullable=True)
     last_name: Mapped[str] = mapped_column(String(64), nullable=True)
 
-    profile_pic: Mapped[str] = mapped_column(Text, nullable=True)
+    profile_pic: Mapped[str] = mapped_column(String(255), nullable=True)
 
     phone_number: Mapped[str] = mapped_column(String(32), nullable=True)
     phone_verified: Mapped[bool] = mapped_column(
@@ -31,5 +38,10 @@ class DBUser(DBBase, PrimaryKeyMixin, TimestampMixin):
         Boolean, default=True, server_default="true"
     )
 
+    # Relation
+    user_roles: Mapped[List["DBUserRole"]] = relationship(
+        "DBUserRole", back_populates="user", cascade="all, delete-orphan"
+    )
+
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, username={self.username!r}, email={self.email!r})"
+        return f"User(id={self.id!r}, username={self.username!r})"
