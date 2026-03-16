@@ -27,7 +27,9 @@ from core.security.jwt.jwt_schemas import JWTPair, JWTPayload, JWTType
 
 class JWTService:
     def build_token_pair(
-        self, subject: str, extra_claims: Dict[str, Any] | None = None
+        self,
+        subject: str,
+        extra_claims: Dict[str, Any] | None = None,
     ) -> JWTPair:
         access_ttl = timedelta(minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
         refresh_ttl = timedelta(days=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
@@ -35,10 +37,16 @@ class JWTService:
         claims = extra_claims or {}
 
         access_token = self._build_token(
-            subject, "access", ttl=access_ttl, extra_claims=claims
+            subject,
+            "access",
+            ttl=access_ttl,
+            extra_claims=claims,
         )
         refresh_token = self._build_token(
-            subject, "refresh", ttl=refresh_ttl, extra_claims=claims
+            subject,
+            "refresh",
+            ttl=refresh_ttl,
+            extra_claims=claims,
         )
 
         return JWTPair(

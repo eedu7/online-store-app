@@ -42,7 +42,8 @@ class AuthController(BaseController[DBUser]):
         await self.commit()
 
         token_pair = jwt_service.build_token_pair(
-            str(user.id), extra_claims={"username": user.username, "email": user.email}
+            str(user.id),
+            extra_claims={"user": {"username": user.username, "email": user.email}},
         )
 
         return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
@@ -63,7 +64,8 @@ class AuthController(BaseController[DBUser]):
             )
 
         token_pair = jwt_service.build_token_pair(
-            str(user.id), extra_claims={"username": user.username, "email": user.email}
+            str(user.id),
+            extra_claims={"user": {"username": user.username, "email": user.email}},
         )
 
         return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
