@@ -66,14 +66,6 @@ class Config(BaseSettings):
         description="Clock-skew tolerance applied when validating 'exp' and 'nbf'. Keep at 0 in production; raise only for cross-service clock drift",
     )
 
-    # Redis
-    REDIS_HOST: str = "localhost"
-    REDIS_PORT: int = 6379
-    REDIS_PASSWORD: str = "password@123"
-    REDIS_MAX_MEMORY: str = "256mb"
-    REDIS_DB_TOKENS: int = 0  # token revocation store
-    REDIS_DB_CACHE: int = 1  # response cache
-
     @computed_field
     @property
     def DATABASE_URL(self) -> PostgresDsn:
@@ -85,16 +77,6 @@ class Config(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
-
-    @computed_field
-    @property
-    def REDIS_URL_TOKENS(self) -> str:
-        return f"redis://{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB_TOKENS}"
-
-    @computed_field
-    @property
-    def REDIS_URL_CACHE(self) -> str:
-        return f"redis://{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB_CACHE}"
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
