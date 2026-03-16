@@ -11,8 +11,8 @@ class UserController(BaseController[DBUser]):
         super().__init__(DBUser, repository)
         self.repository: UserRepository = repository
 
-    async def get_by_id(self, id: str | UUID) -> DBUser:
-        user = await self.repository.get_by_id(UUID(id))
+    async def get_by_id(self, id: UUID) -> DBUser:
+        user = await self.repository.get_by_id(id)
 
         if user is None:
             raise NotFoundException(
