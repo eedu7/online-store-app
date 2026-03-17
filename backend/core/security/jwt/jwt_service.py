@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict
+from typing import Annotated, Any, Dict
 from uuid import uuid4
 
 import jwt
+from fastapi import Depends
 from jwt.exceptions import (
     DecodeError,
     ExpiredSignatureError,
@@ -16,6 +17,7 @@ from jwt.exceptions import (
 
 from core.config import config
 from core.exceptions import InternalServerException
+from core.redis.stores import TokenRevocationStore, TokenRevocationStoreDep
 from core.security.jwt.jwt_exceptions import (
     InvalidTokenException,
     InvalidTokenTypeException,
@@ -26,6 +28,9 @@ from core.security.jwt.jwt_schemas import JWTPair, JWTPayload, JWTType
 
 
 class JWTService:
+    def __init__(self, revocation_store: TokenRevocationStore) -> None:
+        self._revocation_store = revocation_store
+
     def build_token_pair(
         self,
         subject: str,
@@ -217,4 +222,8 @@ class JWTService:
             ) from exc
 
 
-jwt_service = JWTService()
+def get_jwt_service(revocation_store: TokenRevocationStoreDep) -> JWTService:
+    return JWTService(revocation_store)
+
+
+JWTServiceDep = Annotated[JWTService, Depends(get_jwt_service)]

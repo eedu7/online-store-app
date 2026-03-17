@@ -6,11 +6,11 @@ from core.security.jwt.jwt_exceptions import (
     TokenRevokedException,
 )
 from core.security.jwt.jwt_schemas import JWTPair, JWTPayload, JWTType
-from core.security.jwt.jwt_service import JWTService, jwt_service
+from core.security.jwt.jwt_service import JWTService, JWTServiceDep
 
 __all__ = [
     "JWTService",
-    "jwt_service",
+    "JWTServiceDep",
     "JWTPair",
     "JWTPayload",
     "JWTType",

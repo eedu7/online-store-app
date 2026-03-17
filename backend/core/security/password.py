@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Annotated, Tuple
 
 from argon2 import PasswordHasher
 from argon2.exceptions import (
@@ -6,6 +6,7 @@ from argon2.exceptions import (
     VerificationError,
     VerifyMismatchError,
 )
+from fastapi import Depends
 
 from core.config import config
 
@@ -61,4 +62,8 @@ class PasswordService:
         return is_valid, None
 
 
-password_service = PasswordService()
+def get_password_service() -> PasswordService:
+    return PasswordService()
+
+
+PasswordServiceDep = Annotated[PasswordService, Depends(get_password_service)]

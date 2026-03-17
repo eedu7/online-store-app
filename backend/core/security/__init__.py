@@ -1,6 +1,6 @@
-from .password import PasswordService, password_service
+from .password import PasswordService, PasswordServiceDep
 
 __all__ = [
     "PasswordService",
-    "password_service",
+    "PasswordServiceDep",
 ]
