@@ -66,6 +66,17 @@ class Config(BaseSettings):
         description="Clock-skew tolerance applied when validating 'exp' and 'nbf'. Keep at 0 in production; raise only for cross-service clock drift",
     )
 
+    # Redis
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+    REDIS_PASSWORD: str | None = None
+    REDIS_DECODE_RESPONSES: bool = True
+    REDIS_MAX_CONNECTIONS: int = 50
+    REDIS_SOCKET_TIMEOUT: int = 5
+    REDIS_SOCKET_CONNECT_TIMEOUT: int = 5
+    REDIS_HEALTH_CHECK_INTERVAL: int = 30
+
     @computed_field
     @property
     def DATABASE_URL(self) -> PostgresDsn:
