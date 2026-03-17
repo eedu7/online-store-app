@@ -89,14 +89,25 @@ class JWTService:
             subject=payload.sub, extra_claims={**payload.extra, **(extra_claims or {})}
         )
 
-    async def revoke_token(self, jti: str, ttl: int | None = None) -> None:
+    async def revoke_tokens(self, access_token: str, refresh_token: str) -> None:
+        access_payload = self.decode_expired_token(access_token)
+        await self._revoke_token(
+            access_payload.jti, config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        )
+
+        refresh_payload = self.decode_expired_token(refresh_token)
+        await self._revoke_token(
+            refresh_payload.jti, config.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+        )
+
+    async def _revoke_token(self, jti: str, ttl: int | None = None) -> None:
         if ttl is None:
             ttl = config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60
         await self._revocation_store.revoke(jti, ttl=ttl)
 
     async def revoke_token_by_raw(self, token: str) -> None:
         payload = self.decode_token(token, verify_exp=False)
-        await self.revoke_token(payload.jti)
+        await self._revoke_token(payload.jti)
 
     async def is_token_revoked(self, jti: str) -> bool:
         return await self._revocation_store.is_revoked(jti)

@@ -1,6 +1,10 @@
 from app.models import DBUser
 from app.repositories import UserRepository
-from app.schemas.requests.auth import UserLoginRequest, UserRegisterRequest
+from app.schemas.requests.auth import (
+    UserLoginRequest,
+    UserLogoutRequest,
+    UserRegisterRequest,
+)
 from app.schemas.responses.auth import AuthResponse
 from app.schemas.responses.user import UserResponse
 from core.controller import BaseController
@@ -76,3 +80,6 @@ class AuthController(BaseController[DBUser]):
         )
 
         return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
+
+    async def logout(self, payload: UserLogoutRequest) -> None:
+        await self.jwt_service.revoke_tokens(**payload.model_dump())

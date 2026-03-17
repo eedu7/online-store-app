@@ -50,3 +50,8 @@ class UserLoginRequest(BaseModel):
         examples=["john_doe", "john.doe@example.com"],
     )
     password: str = Field(..., description="User password", examples=["SecurePass123!"])
+
+
+class UserLogoutRequest(BaseModel):
+    access_token: str
+    refresh_token: str
