@@ -121,6 +121,11 @@ tasks:
       - uv run alembic downgrade base
       - uv run alembic upgrade head
 
+  db:seed:
+    desc: Seed
+    cmds:
+      - uv run python -m scripts.seed
+
   # Dependencies
   install:
     desc: Install all dependencies
