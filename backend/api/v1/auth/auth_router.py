@@ -21,10 +21,7 @@ async def login(payload: UserLoginRequest, controller: AuthControllerDep):
     return await controller.login(payload)
 
 
-@router.post(
-    "/logout",
-    dependencies=[Depends(auth_required)],
-)
+@router.post("/logout", dependencies=[Depends(auth_required)])
 async def logout(controller: AuthControllerDep):
     raise NotImplementedException(
         message="User logout is not yet implemented",

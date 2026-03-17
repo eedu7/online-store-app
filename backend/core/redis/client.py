@@ -1,7 +1,7 @@
 from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends
-from redis import ConnectionPool, Redis
+from redis.asyncio import ConnectionPool, Redis
 from redis.exceptions import RedisError
 
 from core.config import config

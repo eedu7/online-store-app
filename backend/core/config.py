@@ -70,11 +70,11 @@ class Config(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
-    REDIS_PASSWORD: str | None = None
-    REDIS_DECODE_RESPONSES: bool = True
+    REDIS_PASSWORD: str = ""
     REDIS_MAX_CONNECTIONS: int = 50
     REDIS_SOCKET_TIMEOUT: int = 5
     REDIS_SOCKET_CONNECT_TIMEOUT: int = 5
+    REDIS_DECODE_RESPONSES: bool = True
     REDIS_HEALTH_CHECK_INTERVAL: int = 30
 
     @computed_field
