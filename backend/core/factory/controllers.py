@@ -1,6 +1,5 @@
-from app.controllers import AuthController, RoleController, UserController
+from app.controllers import AuthController, UserController
 from core.factory.repositories import (
-    RoleRepositoryDep,
     UserRepositoryDep,
 )
 from core.security import PasswordServiceDep
@@ -23,7 +22,3 @@ class ControllerFactory:
             jwt_service=jwt_service,
             password_service=password_service,
         )
-
-    @staticmethod
-    def get_role_controller(repository: RoleRepositoryDep) -> RoleController:
-        return RoleController(repository=repository)

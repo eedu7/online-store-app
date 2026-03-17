@@ -5,4 +5,4 @@ from .role import DBRole
 from .user import DBUser
 from .user_role import DBUserRole
 
-__all__ = ["DBBase", "DBUser", "DBRole", "DBUserRole", "DBCategory"]
+__all__ = ["DBBase", "DBUser", "DBCategory", "DBRole", "DBUserRole"]

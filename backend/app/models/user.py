@@ -9,7 +9,7 @@ from core.database import DBBase
 from core.database.mixins import PrimaryKeyMixin, TimestampMixin
 
 if TYPE_CHECKING:
-    from .user_role import DBUserRole
+    from .role import DBRole
 
 
 class DBUser(DBBase, PrimaryKeyMixin, TimestampMixin):
@@ -38,9 +38,9 @@ class DBUser(DBBase, PrimaryKeyMixin, TimestampMixin):
         Boolean, default=True, server_default="true"
     )
 
-    # Relation
-    user_roles: Mapped[List["DBUserRole"]] = relationship(
-        "DBUserRole", back_populates="user", cascade="all, delete-orphan"
+    # Relationship
+    roles: Mapped[List["DBRole"]] = relationship(
+        secondary="user_roles", back_populates="users"
     )
 
     def __repr__(self) -> str:

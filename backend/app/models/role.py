@@ -5,23 +5,22 @@ from typing import TYPE_CHECKING, List
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.user_role import DBUserRole
 from core.database import DBBase
-from core.database.mixins import AuditMixin, PrimaryKeyMixin, TimestampMixin
+from core.database.mixins import PrimaryKeyMixin, TimestampMixin
 
 if TYPE_CHECKING:
-    from .user_role import DBUserRole
+    from .user import DBUser
 
 
-class DBRole(DBBase, PrimaryKeyMixin, TimestampMixin, AuditMixin):
+class DBRole(DBBase, PrimaryKeyMixin, TimestampMixin):
     __tablename__ = "roles"
 
-    name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(32), unique=True)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
-    # Relations
-    user_roles: Mapped[List["DBUserRole"]] = relationship(
-        "DBUserRole", back_populates="role", cascade="all, delete-orphan"
+    # Relationship
+    users: Mapped[List["DBUser"]] = relationship(
+        secondary="user_roles", back_populates="roles"
     )
 
     def __repr__(self) -> str:
