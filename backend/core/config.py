@@ -77,6 +77,9 @@ class Config(BaseSettings):
     REDIS_DECODE_RESPONSES: bool = True
     REDIS_HEALTH_CHECK_INTERVAL: int = 30
 
+    # Redis Key Prefixes
+    REDIS_TOKEN_REVOKE_PREFIX: str = "TOKEN_REVOKED"
+
     @computed_field
     @property
     def DATABASE_URL(self) -> PostgresDsn:
