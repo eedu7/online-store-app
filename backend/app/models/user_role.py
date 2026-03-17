@@ -7,14 +7,14 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.database import DBBase
-from core.database.mixins import PrimaryKeyMixin, TimestampMixin
+from core.database.mixins import AuditMixin, PrimaryKeyMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from .role import DBRole
     from .user import DBUser
 
 
-class DBUserRole(DBBase, PrimaryKeyMixin, TimestampMixin):
+class DBUserRole(DBBase, PrimaryKeyMixin, TimestampMixin, AuditMixin):
     __tablename__ = "user_roles"
 
     # Foreign Keys

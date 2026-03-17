@@ -7,13 +7,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.user_role import DBUserRole
 from core.database import DBBase
-from core.database.mixins import PrimaryKeyMixin, TimestampMixin
+from core.database.mixins import AuditMixin, PrimaryKeyMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from .user_role import DBUserRole
 
 
-class DBRole(DBBase, PrimaryKeyMixin, TimestampMixin):
+class DBRole(DBBase, PrimaryKeyMixin, TimestampMixin, AuditMixin):
     __tablename__ = "roles"
 
     name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
