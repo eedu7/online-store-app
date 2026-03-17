@@ -68,13 +68,10 @@ class JWTService:
         verify_exp: bool = True,
     ) -> JWTPayload:
         if not token or not token.strip():
-            # raise MissingTokenException
             raise MissingTokenException()
 
         raw_payload = self._decode_jwt(token=token, verify_exp=verify_exp)
         payload = self._build_payload(raw_payload)
-
-        # TODO: Revocation check (must happen after successful decode)
 
         if expected_token is not None and payload.type != expected_token:
             raise InvalidTokenTypeException(
@@ -87,26 +84,22 @@ class JWTService:
         self, refresh_token: str, extra_claims: Dict[str, Any] | None = None
     ) -> JWTPair:
         payload = self.decode_token(refresh_token, expected_token="refresh")
-        # TODO: Rotate; Revoke the consumed refresh token immediately
-        # self.revoke_token(payload.jti)
 
         return self.build_token_pair(
             subject=payload.sub, extra_claims={**payload.extra, **(extra_claims or {})}
         )
 
-    def revoke_token(self, jti: str) -> None:
-        # TODO: Revoke Token
-        raise NotImplementedError("revoke_token: wire up a Redis/DB revocation store")
+    async def revoke_token(self, jti: str, ttl: int | None = None) -> None:
+        if ttl is None:
+            ttl = config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        await self._revocation_store.revoke(jti, ttl=ttl)
 
-    def revoke_token_by_raw(self, token: str) -> None:
+    async def revoke_token_by_raw(self, token: str) -> None:
         payload = self.decode_token(token, verify_exp=False)
-        self.revoke_token(payload.jti)
+        await self.revoke_token(payload.jti)
 
-    def is_token_revoked(self, jti: str) -> bool:
-        # TODO: Check revocation store (Redis/DB)
-        raise NotImplementedError(
-            "is_token_revoked: wire upa Redis/DB revocation store"
-        )
+    async def is_token_revoked(self, jti: str) -> bool:
+        return await self._revocation_store.is_revoked(jti)
 
     def decode_expired_token(self, token: str) -> JWTPayload:
         return self.decode_token(token, verify_exp=False)
