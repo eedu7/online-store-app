@@ -33,10 +33,12 @@ services:
 
   redis-commander:
     image: ghcr.io/joeferner/redis-commander:latest
-    env_file: .env
+    environment:
+      - REDIS_HOSTS=local:redis:${REDIS_PORT}:0:${REDIS_PASSWORD}
     ports:
       - "${REDIS_COMMANDER_PORT:-8081}:8081"
-
+    depends_on:
+      - redis
 volumes:
   database-data:
   redis-data:
