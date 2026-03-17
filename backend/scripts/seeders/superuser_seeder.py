@@ -4,6 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import DBRole, DBUser
 from core.security.password import get_password_service
 
+password_service = get_password_service()
+
 
 class SuperuserSeeder:
     ADMIN_ROLE = "admin"
@@ -40,7 +42,7 @@ class SuperuserSeeder:
         user = DBUser(
             username="admin",
             email="admin@example.com",
-            password=get_password_service().hash_password("admin"),
+            password=password_service.hash_password("admin"),
             email_verified=True,
             first_name="System",
             last_name="Admin",
