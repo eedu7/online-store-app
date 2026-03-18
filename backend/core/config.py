@@ -80,6 +80,9 @@ class Config(BaseSettings):
     # Redis Key Prefixes
     REDIS_TOKEN_REVOKE_PREFIX: str = "TOKEN_REVOKED"
 
+    # Bootstrap
+    BOOTSTRAP_SECRET: str = "YOUR_BOOTSTRAP_SECRET"
+
     @computed_field
     @property
     def DATABASE_URL(self) -> PostgresDsn:
