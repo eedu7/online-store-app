@@ -82,6 +82,9 @@ class Config(BaseSettings):
 
     # Bootstrap
     BOOTSTRAP_SECRET: str = "YOUR_BOOTSTRAP_SECRET"
+    
+    # CORS
+    
 
     @computed_field
     @property
