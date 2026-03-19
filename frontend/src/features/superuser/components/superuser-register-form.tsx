@@ -1,5 +1,5 @@
 "use client";
-import { PasswordField } from "@/components/form-fields/password-field";
+
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -9,9 +9,17 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { useAppForm } from "@/hooks/form";
 
 export const SuperuserRegisterForm = () => {
+  const form = useAppForm({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
   return (
     <form>
       <FieldGroup>
@@ -19,30 +27,51 @@ export const SuperuserRegisterForm = () => {
           <FieldLegend>Register Title</FieldLegend>
           <FieldDescription>Register Description</FieldDescription>
           <FieldGroup>
-            <Field>
-              <FieldLabel>First Name</FieldLabel>
-              <Input />
-            </Field>
-            <Field>
-              <FieldLabel>Last Name</FieldLabel>
-              <Input />
-            </Field>
-            <Field>
-              <FieldLabel>Username</FieldLabel>
-              <Input required aria-required />
-            </Field>
-            <Field>
-              <FieldLabel>Email</FieldLabel>
-              <Input required aria-required />
-            </Field>
-            <Field>
-              <FieldLabel>Password</FieldLabel>
-              <Input required aria-required />
-            </Field>
-            <Field>
-              <FieldLabel>Confirm Password</FieldLabel>
-              <Input required aria-required />
-            </Field>
+            <form.AppField
+              name="username"
+              children={(field) => (
+                <field.TextField
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck="false"
+                />
+              )}
+            />
+            <form.AppField
+              name="email"
+              children={(field) => (
+                <field.TextField
+                  label="Email"
+                  name="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck="false"
+                  type="email"
+                />
+              )}
+            />
+            <form.AppField
+              name="password"
+              children={(field) => (
+                <field.PasswordField
+                  label="Password"
+                  name="password"
+                  autoComplete="new-password"
+                />
+              )}
+            />
+            <form.AppField
+              name="confirmPassword"
+              children={(field) => (
+                <field.PasswordField
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                />
+              )}
+            />
           </FieldGroup>
         </FieldSet>
         <Field orientation="horizontal">
