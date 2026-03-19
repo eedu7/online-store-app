@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SuperuserRegisterForm } from "../components/superuser_register_form";
+import { SuperuserRegisterForm } from "../components/superuser-register-form";
 
 export const SuperuserRegisterPage = () => {
   return (

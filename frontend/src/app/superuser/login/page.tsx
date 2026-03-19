@@ -1,4 +1,4 @@
-import { SuperuserLoginPage } from "@/features/superuser/pages/superuser_login_page";
+import { SuperuserLoginPage } from "@/features/superuser/pages/superuser-login-page";
 
 export default function Page() {
   return <SuperuserLoginPage />;
