@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SuperuserLoginForm } from "../components/superuser_login_form";
+import { SuperuserLoginForm } from "../components/superuser-login-form";
 
 export const SuperuserLoginPage = () => {
   return (
