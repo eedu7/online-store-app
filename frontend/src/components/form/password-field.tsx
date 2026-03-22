@@ -2,18 +2,21 @@
 
 import { useFieldContext } from "@/context/form";
 import { useStore } from "@tanstack/react-form";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputHTMLAttributes, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Eye, EyeOff } from "@hugeicons/core-free-icons";
+import { FormFieldError } from "./form-field-error";
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  required?: boolean;
 }
 
 export const PasswordField = ({
   label,
+  required = false,
   ...props
 }: Props): React.JSX.Element => {
   const field = useFieldContext<string>();
@@ -25,7 +28,10 @@ export const PasswordField = ({
 
   return (
     <Field>
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel className="gap-1">
+        {label}
+        {required && <span className="text-rose-700">*</span>}
+      </FieldLabel>
       <div className="relative">
         <Input
           type={isVisible ? "text" : "password"}
@@ -34,17 +40,16 @@ export const PasswordField = ({
           onBlur={field.handleBlur}
           {...props}
         />
-        <HugeiconsIcon
-          icon={isVisible ? Eye : EyeOff}
+        <button
+          type="button"
           onClick={toggleVisibility}
-          className="absolute top-1/2 -translate-y-1/2 right-2 size-4 cursor-pointer"
-        />
+          className="absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer"
+          aria-label={isVisible ? "Hide password" : "Show password"}
+        >
+          <HugeiconsIcon icon={isVisible ? Eye : EyeOff} className="size-4" />
+        </button>
       </div>
-      {errors.map((error: string) => (
-        <FieldDescription key={error} className="text-rose-500">
-          {JSON.stringify(error, null, 2)}
-        </FieldDescription>
-      ))}
+      <FormFieldError errors={errors} />
     </Field>
   );
 };

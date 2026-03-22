@@ -7,7 +7,10 @@ export const loginSchema = z.object({
 
 export const registerUserSchema = z
   .object({
-    username: z.string().min(3).max(30),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters long.")
+      .max(30, "Username must not exceed 30 characters."),
     email: z.email(),
     password: z
       .string()
@@ -19,7 +22,7 @@ export const registerUserSchema = z
         /[^A-Za-z0-9]/,
         "Password must contain at least one special character.",
       ),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1, "Confirm Password is required."),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (confirmPassword !== password) {
