@@ -19,8 +19,10 @@ export const PasswordField = ({
   const field = useFieldContext<string>();
 
   const errors = useStore(field.store, (state) => state.meta.errors);
+
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible((prev) => !prev);
+
   return (
     <Field>
       <FieldLabel>{label}</FieldLabel>
@@ -40,7 +42,7 @@ export const PasswordField = ({
       </div>
       {errors.map((error: string) => (
         <FieldDescription key={error} className="text-rose-500">
-          {error}
+          {JSON.stringify(error, null, 2)}
         </FieldDescription>
       ))}
     </Field>

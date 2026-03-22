@@ -26,7 +26,7 @@ export const TextField = ({ label, ...props }: Props): React.JSX.Element => {
       />
       {errors.map((error: string) => (
         <FieldDescription key={error} className="text-rose-500">
-          {error}
+          {JSON.stringify(error, null, 2)}
         </FieldDescription>
       ))}
     </Field>

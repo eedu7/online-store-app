@@ -8,9 +8,15 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { useAppForm } from "@/hooks/form";
-import { registerUserSchema } from "../auth.schema";
+import { RegisterUserSchema, registerUserSchema } from "../auth.schema";
+import { UseMutationResult } from "@tanstack/react-query";
+import { revalidateLogic } from "@tanstack/react-form";
 
-export const RegisterForm = () => {
+interface Props {
+  mutation: UseMutationResult<void, Error, RegisterUserSchema>;
+}
+
+export const RegisterForm = ({ mutation }: Props) => {
   const form = useAppForm({
     defaultValues: {
       username: "",
@@ -18,11 +24,16 @@ export const RegisterForm = () => {
       password: "",
       confirmPassword: "",
     },
+    validationLogic: revalidateLogic(),
     validators: {
       onDynamic: registerUserSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      try {
+        mutation.mutateAsync(value);
+      } catch {
+        // Error is accessbile via mutation.isError / mutation.error
+      }
     },
   });
   return (
@@ -35,7 +46,7 @@ export const RegisterForm = () => {
     >
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>Register Title</FieldLegend>
+          <FieldLegend>Register - Title</FieldLegend>
           <FieldDescription>Register Description</FieldDescription>
           <FieldGroup>
             <form.AppField
@@ -75,6 +86,13 @@ export const RegisterForm = () => {
             />
             <form.AppField
               name="confirmPassword"
+              validators={{
+                onChange: ({ value }) => {
+                  value.length < 8
+                    ? "Password must be greater than 8"
+                    : undefined;
+                },
+              }}
               children={(field) => (
                 <field.PasswordField
                   label="Confirm Password"
