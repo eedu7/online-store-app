@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SuperuserLoginForm } from "../components/superuser-login-form";
+import { RegisterForm } from "@/features/auth/components/register-form";
 
 export const SuperuserLoginPage = () => {
   return (
@@ -17,7 +17,7 @@ export const SuperuserLoginPage = () => {
           <CardDescription></CardDescription>
         </CardHeader>
         <CardContent>
-          <SuperuserLoginForm />
+          <RegisterForm />
         </CardContent>
         <CardFooter></CardFooter>
       </Card>

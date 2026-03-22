@@ -1,17 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
-  FieldLabel,
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
 import { useAppForm } from "@/hooks/form";
+import { registerUserSchema } from "../auth.schema";
 
-export const SuperuserRegisterForm = () => {
+export const RegisterForm = () => {
   const form = useAppForm({
     defaultValues: {
       username: "",
@@ -19,9 +18,21 @@ export const SuperuserRegisterForm = () => {
       password: "",
       confirmPassword: "",
     },
+    validators: {
+      onDynamic: registerUserSchema,
+    },
+    onSubmit: async ({ value }) => {
+      console.log(value);
+    },
   });
   return (
-    <form>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <FieldGroup>
         <FieldSet>
           <FieldLegend>Register Title</FieldLegend>
@@ -75,10 +86,9 @@ export const SuperuserRegisterForm = () => {
           </FieldGroup>
         </FieldSet>
         <Field orientation="horizontal">
-          <Button type="submit">Submit</Button>
-          <Button variant="outline" type="button">
-            Cancel
-          </Button>
+          <form.AppForm>
+            <form.SubmitButton label="Register" />
+          </form.AppForm>
         </Field>
       </FieldGroup>
     </form>
