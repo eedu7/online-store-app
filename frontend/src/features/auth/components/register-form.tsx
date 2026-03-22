@@ -46,8 +46,6 @@ export const RegisterForm = ({ mutation }: Props) => {
     >
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>Register - Title</FieldLegend>
-          <FieldDescription>Register Description</FieldDescription>
           <FieldGroup>
             <form.AppField
               name="username"
@@ -86,13 +84,6 @@ export const RegisterForm = ({ mutation }: Props) => {
             />
             <form.AppField
               name="confirmPassword"
-              validators={{
-                onChange: ({ value }) => {
-                  value.length < 8
-                    ? "Password must be greater than 8"
-                    : undefined;
-                },
-              }}
               children={(field) => (
                 <field.PasswordField
                   label="Confirm Password"
@@ -105,7 +96,10 @@ export const RegisterForm = ({ mutation }: Props) => {
         </FieldSet>
         <Field orientation="horizontal">
           <form.AppForm>
-            <form.SubmitButton label="Register" />
+            <form.SubmitButton
+              label="Register"
+              isPending={mutation.isPending}
+            />
           </form.AppForm>
         </Field>
       </FieldGroup>
