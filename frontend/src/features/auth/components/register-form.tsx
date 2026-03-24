@@ -8,15 +8,13 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { useAppForm } from "@/hooks/form";
-import { RegisterUserSchema, registerUserSchema } from "../auth.schema";
-import { UseMutationResult } from "@tanstack/react-query";
+import { registerUserSchema } from "../auth.schema";
 import { revalidateLogic } from "@tanstack/react-form";
+import { useRegister } from "../hooks/use-register";
 
-interface Props {
-  mutation: UseMutationResult<void, Error, RegisterUserSchema>;
-}
+export const RegisterForm = () => {
+  const mutation = useRegister();
 
-export const RegisterForm = ({ mutation }: Props) => {
   const form = useAppForm({
     defaultValues: {
       username: "",
@@ -28,6 +26,7 @@ export const RegisterForm = ({ mutation }: Props) => {
     validators: {
       onDynamic: registerUserSchema,
     },
+    // TODO: OnSubmit proper error handling
     onSubmit: async ({ value }) => {
       try {
         mutation.mutateAsync(value);

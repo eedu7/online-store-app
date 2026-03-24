@@ -2,15 +2,13 @@
 
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { useAppForm } from "@/hooks/form";
-import { LoginUserSchema, loginUserSchema } from "../auth.schema";
-import { UseMutationResult } from "@tanstack/react-query";
+import { loginUserSchema } from "../auth.schema";
 import { revalidateLogic } from "@tanstack/react-form";
+import { useLogin } from "../hooks/use-login";
 
-interface Props {
-  mutation: UseMutationResult<void, Error, LoginUserSchema>;
-}
+export const LoginForm = () => {
+  const mutation = useLogin();
 
-export const LoginForm = ({ mutation }: Props) => {
   const form = useAppForm({
     defaultValues: {
       username_or_email: "",
