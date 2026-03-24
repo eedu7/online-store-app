@@ -1,3 +1,5 @@
+from fastapi import Request, Response
+
 from app.models import DBUser
 from app.repositories import UserRepository
 from app.schemas.requests.auth import (
@@ -7,6 +9,7 @@ from app.schemas.requests.auth import (
 )
 from app.schemas.responses.auth import AuthResponse
 from app.schemas.responses.user import UserResponse
+from core.config import config
 from core.controller import BaseController
 from core.exceptions import DuplicateValueException, UnauthorizedException
 from core.security import PasswordService
@@ -25,7 +28,9 @@ class AuthController(BaseController[DBUser]):
         self.jwt_service = jwt_service
         self.password_service = password_service
 
-    async def register(self, payload: UserRegisterRequest) -> AuthResponse:
+    async def register(
+        self, payload: UserRegisterRequest, response: Response
+    ) -> AuthResponse:
 
         if await self.repository.get_by_email(payload.email):
             raise DuplicateValueException(
@@ -57,9 +62,15 @@ class AuthController(BaseController[DBUser]):
             extra_claims={"user": {"username": user.username, "email": user.email}},
         )
 
-        return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
+        auth_response = AuthResponse(
+            token=token_pair, user=UserResponse.model_validate(user)
+        )
+        self._set_cookies(auth_response, response)
+        return auth_response
 
-    async def login(self, payload: UserLoginRequest) -> AuthResponse:
+    async def login(
+        self, payload: UserLoginRequest, response: Response
+    ) -> AuthResponse:
         user = await self.repository.get_by_username_or_email(payload.username_or_email)
 
         if user is None:
@@ -79,7 +90,46 @@ class AuthController(BaseController[DBUser]):
             extra_claims={"user": {"username": user.username, "email": user.email}},
         )
 
-        return AuthResponse(token=token_pair, user=UserResponse.model_validate(user))
+        auth_response = AuthResponse(
+            token=token_pair, user=UserResponse.model_validate(user)
+        )
+        self._set_cookies(auth_response, response)
+        return auth_response
 
-    async def logout(self, payload: UserLogoutRequest) -> None:
+    async def logout(self, payload: UserLogoutRequest, request: Request) -> None:
+        self._delete_cookies(request)
         await self.jwt_service.revoke_tokens(**payload.model_dump())
+
+    def _set_cookies(self, payload: AuthResponse, response: Response) -> None:
+        is_secure = config.COOKIE_SECURE
+        samesite = config.COOKIE_SAMESITE
+        domain = config.COOKIE_DOMAIN
+
+        access_token_max_age_in_seconds = config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        refresh_token_max_age_in_seconds = (
+            config.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 60 * 60 * 24
+        )
+
+        response.set_cookie(
+            key="ACCESS_TOKEN",
+            value=payload.token.access_token,
+            max_age=access_token_max_age_in_seconds,
+            httponly=True,
+            secure=is_secure,
+            samesite=samesite,
+            domain=domain,
+            path="/",
+        )
+        response.set_cookie(
+            key="REFRESH_TOKEN",
+            value=payload.token.refresh_token,
+            max_age=refresh_token_max_age_in_seconds,
+            httponly=True,
+            secure=is_secure,
+            samesite=samesite,
+            domain=domain,
+            path="/",
+        )
+
+    def _delete_cookies(self, request: Request) -> None:
+        request.cookies.clear()

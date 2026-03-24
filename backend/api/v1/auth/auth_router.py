@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, Response, status
 
 from app.schemas.requests.auth import (
     UserLoginRequest,
@@ -15,13 +15,19 @@ router = APIRouter()
 @router.post(
     "/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED
 )
-async def register(payload: UserRegisterRequest, controller: AuthControllerDep):
-    return await controller.register(payload)
+async def register(
+    response: Response, payload: UserRegisterRequest, controller: AuthControllerDep
+):
+    return await controller.register(payload, response)
 
 
 @router.post("/login", response_model=AuthResponse, status_code=status.HTTP_200_OK)
-async def login(payload: UserLoginRequest, controller: AuthControllerDep):
-    return await controller.login(payload)
+async def login(
+    response: Response,
+    payload: UserLoginRequest,
+    controller: AuthControllerDep,
+):
+    return await controller.login(payload, response)
 
 
 @router.post(
@@ -29,5 +35,7 @@ async def login(payload: UserLoginRequest, controller: AuthControllerDep):
     dependencies=[Depends(auth_required)],
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def logout(payload: UserLogoutRequest, controller: AuthControllerDep):
+async def logout(
+    request: Request, payload: UserLogoutRequest, controller: AuthControllerDep
+):
     await controller.logout(payload)

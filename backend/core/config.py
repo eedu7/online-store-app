@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import List
+from typing import List, Literal
 
 from pydantic import Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -89,6 +89,17 @@ class Config(BaseSettings):
     CORS_ALLOW_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: List[str] = ["*"]
     CORS_ALLOW_HEADERS: List[str] = ["*"]
+
+    # Cookie
+    COOKIE_SECURE: bool = Field(
+        False, description="Set to False only in development (allows HTTP)"
+    )
+    COOKIE_SAMESITE: Literal["lax", "strict", "none"] = Field(
+        "lax", description="SameSite poicy"
+    )
+    COOKIE_DOMAIN: str | None = Field(
+        None, description="Cookie domain. None = current domain only"
+    )
 
     @computed_field
     @property
