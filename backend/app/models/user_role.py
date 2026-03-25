@@ -14,4 +14,4 @@ class DBUserRole(DBBase, TimestampMixin):
     role_id: Mapped[UUID] = mapped_column(ForeignKey("roles.id"), primary_key=True)
 
     def __repr__(self) -> str:
-        return f"UserRole(id={self.id!r}, user_id={self.user_id!r}, role_id={self.role_id!r})"
+        return f"UserRole(user_id={self.user_id!r}, role_id={self.role_id!r})"

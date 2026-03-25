@@ -1,5 +1,8 @@
+from uuid import UUID
+
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models import DBUser
 from core.repository import BaseRepository
@@ -8,6 +11,11 @@ from core.repository import BaseRepository
 class UserRepository(BaseRepository[DBUser]):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(DBUser, session)
+
+    async def get_by_id(self, id: UUID) -> DBUser | None:
+        stmt = select(DBUser).where(DBUser.id == id).options(selectinload(DBUser.roles))
+        result = await self.session.execute(stmt)
+        return result.scalars().first()
 
     async def get_by_username(self, username: str) -> DBUser | None:
         return await self.get_one_by_filters({"username": username})

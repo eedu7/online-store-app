@@ -9,4 +9,5 @@ from core.dependencies.controllers import UserControllerDep
 async def get_current_user(
     payload: AuthenticationRequired, controller: UserControllerDep
 ) -> DBUser:
-    return await controller.get_by_id(cast(UUID, payload.sub))
+    # return await controller.get_by_id(cast(UUID, payload.sub))
+    return await controller.repository.get_by_id(cast(UUID, payload.sub))
