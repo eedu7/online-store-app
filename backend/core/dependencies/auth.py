@@ -14,20 +14,25 @@ async def auth_required(
     ],
     jwt_service: JWTServiceDep,
 ) -> JWTPayload:
-
+    print("Cookies:", request.cookies)
     token = None
-
+    print("Step 01")
     if credentials:
+        print("Step 02")
         token = credentials.credentials
     else:
+        print("Step 03")
         cookie_token = request.cookies.get("ACCESS_TOKEN")
         if cookie_token:
+            print("Step 04")
             token = cookie_token
         else:
+            print("Step 05")
             raise UnauthorizedException(
                 message="Authorization header is missing",
                 error_code="AUTH_HEADER_MISSING",
             )
+    print("Token:", token)
 
     payload = jwt_service.decode_token(token, expected_token="access")
 

@@ -118,8 +118,6 @@ class AuthController(BaseController[DBUser]):
             httponly=True,
             secure=is_secure,
             samesite=samesite,
-            domain=domain,
-            path="/",
         )
         response.set_cookie(
             key="REFRESH_TOKEN",
@@ -130,8 +128,6 @@ class AuthController(BaseController[DBUser]):
             httponly=True,
             secure=is_secure,
             samesite=samesite,
-            domain=domain,
-            path="/",
         )
 
     def _delete_cookies(self, request: Request) -> None:
