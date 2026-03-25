@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from fastapi import Request, Response
 
-from app.models import DBUser
-from app.repositories import UserRepository
+from app.models import DBRole, DBUser
+from app.repositories import RoleRepository, UserRepository, UserRoleRepository
 from app.schemas.requests.auth import (
     UserLoginRequest,
     UserLogoutRequest,
@@ -13,7 +13,11 @@ from app.schemas.responses.auth import AuthResponse
 from app.schemas.responses.user import UserResponse
 from core.config import config
 from core.controller import BaseController
-from core.exceptions import DuplicateValueException, UnauthorizedException
+from core.exceptions import (
+    DuplicateValueException,
+    InternalServerException,
+    UnauthorizedException,
+)
 from core.security import PasswordService
 from core.security.jwt import JWTService
 
@@ -21,12 +25,16 @@ from core.security.jwt import JWTService
 class AuthController(BaseController[DBUser]):
     def __init__(
         self,
-        repository: UserRepository,
+        user_repository: UserRepository,
+        role_repository: RoleRepository,
+        user_role_repository: UserRoleRepository,
         jwt_service: JWTService,
         password_service: PasswordService,
     ) -> None:
-        super().__init__(DBUser, repository)
-        self.repository = repository
+        super().__init__(DBUser, user_repository)
+        self.user_repository = user_repository
+        self.role_repository = role_repository
+        self.user_role_repository = user_role_repository
         self.jwt_service = jwt_service
         self.password_service = password_service
 
@@ -34,14 +42,14 @@ class AuthController(BaseController[DBUser]):
         self, payload: UserRegisterRequest, response: Response
     ) -> AuthResponse:
 
-        if await self.repository.get_by_email(payload.email):
+        if await self.user_repository.get_by_email(payload.email):
             raise DuplicateValueException(
                 message="Email already registered",
                 error_code="EMAIL_ALREADY_EXISTS",
                 details={"email": payload.email},
             )
 
-        if await self.repository.get_by_username(payload.username):
+        if await self.user_repository.get_by_username(payload.username):
             raise DuplicateValueException(
                 message="Username already registered",
                 error_code="USERNAME_ALREADY_EXISTS",
@@ -50,14 +58,21 @@ class AuthController(BaseController[DBUser]):
 
         hashed_password = self.password_service.hash_password(payload.password)
 
-        user = await self.repository.create(
+        user = await self.user_repository.create(
             {
                 "email": payload.email,
                 "username": payload.username,
                 "password": hashed_password,
             }
         )
+        await self.flush()
+
+        role = await self._get_or_create_customer_role()
+
+        await self._assign_role(user, role)
+
         await self.commit()
+        await self.refresh(user)
 
         token_pair = self.jwt_service.build_token_pair(
             str(user.id),
@@ -73,7 +88,9 @@ class AuthController(BaseController[DBUser]):
     async def login(
         self, payload: UserLoginRequest, response: Response
     ) -> AuthResponse:
-        user = await self.repository.get_by_username_or_email(payload.username_or_email)
+        user = await self.user_repository.get_by_username_or_email(
+            payload.username_or_email
+        )
 
         if user is None:
             raise UnauthorizedException(
@@ -131,3 +148,30 @@ class AuthController(BaseController[DBUser]):
 
     def _delete_cookies(self, request: Request) -> None:
         request.cookies.clear()
+
+    async def _get_or_create_customer_role(self) -> DBRole:
+        try:
+            existing_role = await self.role_repository.get_one_by_filters(
+                {"name": "customer"}
+            )
+            if existing_role:
+                return existing_role
+
+            # create new role
+            new_role = await self.role_repository.create(
+                {"name": "customer", "description": "A customer"}
+            )
+
+            await self.flush()
+            return new_role
+        except Exception:
+            raise InternalServerException("Failed to initialize customer role")
+
+    async def _assign_role(self, user: DBUser, role: DBRole) -> None:
+        try:
+            await self.user_role_repository.create(
+                {"user_id": user.id, "role_id": role.id}
+            )
+
+        except Exception:
+            raise InternalServerException(f"Failed to assign {role.name} role to user")
