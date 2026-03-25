@@ -40,7 +40,7 @@ class DBUser(DBBase, PrimaryKeyMixin, TimestampMixin):
 
     # Relationship
     roles: Mapped[List["DBRole"]] = relationship(
-        secondary="user_roles", back_populates="users"
+        secondary="user_roles", back_populates="users", lazy="selectin"
     )
 
     def __repr__(self) -> str:

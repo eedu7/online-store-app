@@ -1,4 +1,8 @@
+from typing import List
+
 from pydantic import UUID4, BaseModel, ConfigDict, EmailStr
+
+from app.schemas.responses.role import RoleResponse
 
 
 class UserResponse(BaseModel):
@@ -11,5 +15,6 @@ class UserResponse(BaseModel):
     phone_number: str | None = None
     phone_verified: bool
     is_active: bool
+    roles: List[RoleResponse] = []
 
     model_config = ConfigDict(from_attributes=True)

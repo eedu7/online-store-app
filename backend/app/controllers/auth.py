@@ -105,7 +105,6 @@ class AuthController(BaseController[DBUser]):
     def _set_cookies(self, payload: AuthResponse, response: Response) -> None:
         is_secure = config.COOKIE_SECURE
         samesite = config.COOKIE_SAMESITE
-        domain = config.COOKIE_DOMAIN
 
         response.set_cookie(
             key="ACCESS_TOKEN",
