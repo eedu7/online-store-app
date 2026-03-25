@@ -4,7 +4,7 @@ import { RegisterUserSchema } from "../auth.schema";
 import { useRouter } from "next/navigation";
 import { AuthResponse } from "../auth.type";
 import { useAuthStore } from "../auth.store";
-import { buildUrl } from "@/lib/utils";
+import { buildUrl } from "@/lib/api/api.utils";
 
 export function useRegister() {
   const router = useRouter();

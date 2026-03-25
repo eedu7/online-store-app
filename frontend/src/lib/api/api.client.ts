@@ -1,5 +1,5 @@
-import { ApiError } from "./error";
-import { buildUrl } from "./utils";
+import { ApiError } from "./api.error";
+import { buildUrl } from "./api.utils";
 
 export async function apiBrowserClient(endpoint: string, init?: RequestInit) {
   const res = await fetch(buildUrl(endpoint), {

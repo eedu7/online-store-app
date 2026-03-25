@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { buildUrl } from "./api/utils";
+import { buildUrl } from "./api/api.utils";
 import { cookies } from "next/headers";
 
 export async function requireAuth() {
