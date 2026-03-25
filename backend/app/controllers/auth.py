@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import Request, Response
 
 from app.models import DBUser
@@ -105,15 +107,14 @@ class AuthController(BaseController[DBUser]):
         samesite = config.COOKIE_SAMESITE
         domain = config.COOKIE_DOMAIN
 
-        access_token_max_age_in_seconds = config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60
-        refresh_token_max_age_in_seconds = (
-            config.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 60 * 60 * 24
-        )
-
         response.set_cookie(
             key="ACCESS_TOKEN",
             value=payload.token.access_token,
-            max_age=access_token_max_age_in_seconds,
+            max_age=int(
+                timedelta(
+                    minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+                ).total_seconds()
+            ),
             httponly=True,
             secure=is_secure,
             samesite=samesite,
@@ -123,7 +124,9 @@ class AuthController(BaseController[DBUser]):
         response.set_cookie(
             key="REFRESH_TOKEN",
             value=payload.token.refresh_token,
-            max_age=refresh_token_max_age_in_seconds,
+            max_age=int(
+                timedelta(days=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS).total_seconds()
+            ),
             httponly=True,
             secure=is_secure,
             samesite=samesite,

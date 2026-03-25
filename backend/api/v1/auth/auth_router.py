@@ -38,4 +38,4 @@ async def login(
 async def logout(
     request: Request, payload: UserLogoutRequest, controller: AuthControllerDep
 ):
-    await controller.logout(payload)
+    await controller.logout(payload, request)
