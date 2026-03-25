@@ -43,10 +43,10 @@ export const PasswordField = ({
         <button
           type="button"
           onClick={toggleVisibility}
-          className="absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer"
+          className="absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer hover:underline underline-offset-2 transition-all duration-1000"
           aria-label={isVisible ? "Hide password" : "Show password"}
         >
-          <HugeiconsIcon icon={isVisible ? Eye : EyeOff} className="size-4" />
+          {isVisible ? "Hide" : "Show"}
         </button>
       </div>
       <FormFieldError errors={errors} />
