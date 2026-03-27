@@ -7,5 +7,5 @@ router = APIRouter(dependencies=[Depends(auth_required)])
 
 
 @router.get("/me")
-async def get_user(request: Request, user=Depends(get_current_user)):
-    return {"user": user, "cookies": request.cookies}
+async def get_user(user=Depends(get_current_user)):
+    return user

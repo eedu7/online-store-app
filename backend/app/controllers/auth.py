@@ -14,6 +14,7 @@ from app.schemas.responses.user import UserResponse
 from core.config import config
 from core.controller import BaseController
 from core.exceptions import (
+    BadRequestException,
     DuplicateValueException,
     InternalServerException,
     UnauthorizedException,
@@ -116,8 +117,23 @@ class AuthController(BaseController[DBUser]):
         return auth_response
 
     async def logout(self, payload: UserLogoutRequest, request: Request) -> None:
+        print("STEP 01")
+        if payload.access_token is None:
+            print("STEP 02")
+            payload.access_token = request.cookies.get("ACCESS_TOKEN")
+        if payload.refresh_token is None:
+            print("STEP 03")
+            payload.refresh_token = request.cookies.get("REFRESH_TOKEN")
+
+        print("STEP 04")
+        if not payload.model_dump(exclude_none=True):
+            print("STEP 05")
+            raise BadRequestException("No credentials provided")
+
+        print("STEP 06")
+        await self.jwt_service.revoke_tokens(**payload.model_dump(exclude_none=True))
+        print("STEP 07")
         self._delete_cookies(request)
-        await self.jwt_service.revoke_tokens(**payload.model_dump())
 
     def _set_cookies(self, payload: AuthResponse, response: Response) -> None:
         is_secure = config.COOKIE_SECURE

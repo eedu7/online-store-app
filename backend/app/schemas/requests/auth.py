@@ -53,5 +53,5 @@ class UserLoginRequest(BaseModel):
 
 
 class UserLogoutRequest(BaseModel):
-    access_token: str
-    refresh_token: str
+    access_token: str | None = None
+    refresh_token: str | None = None

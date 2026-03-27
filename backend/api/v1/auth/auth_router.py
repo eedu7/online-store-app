@@ -33,9 +33,14 @@ async def login(
 @router.post(
     "/logout",
     dependencies=[Depends(auth_required)],
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 async def logout(
     request: Request, payload: UserLogoutRequest, controller: AuthControllerDep
 ):
     await controller.logout(payload, request)
+    return {
+        "statusCode": status.HTTP_200_OK,
+        "success": True,
+        "message": "Successfully logged out",
+    }
