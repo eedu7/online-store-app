@@ -50,6 +50,7 @@ class SuperuserBootstrap(BaseController[DBUser]):
 
             # Commit all changes
             await self.commit()
+            await self.refresh(admin_user)
 
             token_pair = self.jwt_service.build_token_pair(
                 str(admin_user.id),

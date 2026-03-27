@@ -10,7 +10,9 @@ from core.database.mixins import TimestampMixin
 class DBUserRole(DBBase, TimestampMixin):
     __tablename__ = "user_roles"
 
-    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
     role_id: Mapped[UUID] = mapped_column(ForeignKey("roles.id"), primary_key=True)
 
     def __repr__(self) -> str:
