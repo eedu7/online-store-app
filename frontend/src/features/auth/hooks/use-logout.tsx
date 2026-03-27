@@ -7,7 +7,13 @@ export function useLogout() {
   const router = useRouter();
   return useMutation({
     mutationFn: async () => {
-      await apiBrowserClient("/auth/logout");
+      await apiBrowserClient("/auth/logout", {
+        body: JSON.stringify({
+          access_token: null,
+          refresh_token: null,
+        }),
+        method: "POST",
+      });
     },
     mutationKey: ["use-logout", "use-auth"],
     onSuccess: () => {

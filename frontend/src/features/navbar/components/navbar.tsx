@@ -6,7 +6,8 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { getCurrentUser } from "@/features/auth/auth.utilts";
+import {getCurrentUser} from "@/features/auth/auth.utilts";
+import {NavbarSignOutButton} from "@/features/navbar/components/navbar-sign-out-button";
 
 export const Navbar = async () => {
   const currentUser = await getCurrentUser();
@@ -16,7 +17,9 @@ export const Navbar = async () => {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationLink href="/" label="Home" />
-          {!currentUser && (
+          {currentUser ? (
+            <NavbarSignOutButton />
+          ) : (
             <>
               <NavigationLink href="/login" label="Sign In" />
               <NavigationLink href="/register" label="Sign Up" />
