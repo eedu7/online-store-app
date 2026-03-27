@@ -6,16 +6,25 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { getCurrentUser } from "@/features/auth/auth.utilts";
 
-export const Navbar = () => {
+export const Navbar = async () => {
+  const currentUser = await getCurrentUser();
+
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationLink href="/" label="Home" />
-        <NavigationLink href="/login" label="Sign In" />
-        <NavigationLink href="/register" label="Sign Up" />
-      </NavigationMenuList>
-    </NavigationMenu>
+    <div className="w-full flex justify-end items-center max-w-7xl">
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationLink href="/" label="Home" />
+          {!currentUser && (
+            <>
+              <NavigationLink href="/login" label="Sign In" />
+              <NavigationLink href="/register" label="Sign Up" />
+            </>
+          )}
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
   );
 };
 

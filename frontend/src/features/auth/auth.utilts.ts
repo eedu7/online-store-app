@@ -1,11 +1,10 @@
-import { redirect } from "next/navigation";
-import { apiServerClient } from "@/lib/api/api.server";
-import { UserResponse } from "./auth.type";
+import {redirect} from "next/navigation";
+import {apiServerClient} from "@/lib/api/api.server";
+import type {UserResponse} from "./auth.type";
 
 export async function requireAuth(): Promise<UserResponse> {
   try {
-    const user = await apiServerClient("/users/me");
-    return user;
+    return await apiServerClient("/users/me");
   } catch {
     redirect("/login");
   }
@@ -17,5 +16,13 @@ export async function requireUnauth() {
     redirect("/");
   } catch {
     // Not authenticated, allow access
+  }
+}
+
+export async function getCurrentUser(): Promise<UserResponse | null> {
+  try {
+    return await apiServerClient("/users/me");
+  } catch {
+    return null;
   }
 }
