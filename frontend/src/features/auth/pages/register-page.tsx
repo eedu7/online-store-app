@@ -1,8 +1,10 @@
-import { RegisterForm } from "../components/register-form";
-import { AuthCard } from "../components/auth-card";
-import { requireUnauth } from "@/features/auth/auth.utilts";
+import {AuthCard} from "../components/auth-card";
+import {RegisterForm} from "../components/register-form";
 
 export const RegisterPage = async () => {
-  await requireUnauth();
-  return <AuthCard title="" description="" children={<RegisterForm />} />;
+  return (
+    <AuthCard description="Sign up to get started" title="Create an account">
+      <RegisterForm />
+    </AuthCard>
+  );
 };

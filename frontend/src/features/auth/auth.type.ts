@@ -27,9 +27,18 @@ export interface AuthResponse {
   token: Token;
 }
 
-export interface CurrentUser {
-  user: User | null;
-  isAdmin: boolean;
-  isTenant: boolean;
-  isCustomer: boolean;
-}
+export type CurrentUser =
+  | {
+      user: User;
+      authenticated: true;
+      isAdmin: boolean;
+      isTenant: boolean;
+      isCustomer: true;
+    }
+  | {
+      user: null;
+      authenticated: false;
+      isAdmin: false;
+      isCustomer: false;
+      isTenant: false;
+    };

@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
+import { requireUnAuth } from "@/features/auth/auth.utilts";
 import { Navbar } from "@/features/navbar/components/navbar";
 
-export const AuthLayout = ({ children }: { children: ReactNode }) => {
+export const AuthLayout = async ({ children }: { children: ReactNode }) => {
+  await requireUnAuth();
   return (
     <div className="w-full h-screen flex flex-col ">
       <Navbar />
