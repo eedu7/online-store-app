@@ -1,9 +1,9 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
-import {NavigationMenuItem} from "@/components/ui/navigation-menu";
-import {Spinner} from "@/components/ui/spinner";
-import {useLogout} from "@/features/auth/hooks/use-logout";
+import { Button } from "@/components/ui/button";
+import { NavigationMenuItem } from "@/components/ui/navigation-menu";
+import { Spinner } from "@/components/ui/spinner";
+import { useLogout } from "@/features/auth/hooks/use-logout";
 
 export const NavbarSignOutButton = () => {
   const logout = useLogout();

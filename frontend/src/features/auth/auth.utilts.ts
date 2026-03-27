@@ -1,8 +1,8 @@
 import {redirect} from "next/navigation";
 import {apiServerClient} from "@/lib/api/api.server";
-import type {UserResponse} from "./auth.type";
+import type {CurrentUser, User} from "./auth.type";
 
-export async function requireAuth(): Promise<UserResponse> {
+export async function requireAuth(): Promise<User> {
   try {
     return await apiServerClient("/users/me");
   } catch {
@@ -19,10 +19,25 @@ export async function requireUnauth() {
   }
 }
 
-export async function getCurrentUser(): Promise<UserResponse | null> {
+function hasRole(user: User, role: string): boolean {
+  return user.roles.some((r) => r.name.toLowerCase() === role.toLowerCase());
+}
+
+export async function getCurrentUser(): Promise<CurrentUser> {
   try {
-    return await apiServerClient("/users/me");
+    const user = await apiServerClient("/users/me");
+    return {
+      isAdmin: hasRole(user, "admin"),
+      isCustomer: hasRole(user, "customer"),
+      isTenant: hasRole(user, "tenant"),
+      user,
+    };
   } catch {
-    return null;
+    return {
+      isAdmin: false,
+      isCustomer: false,
+      isTenant: false,
+      user: null,
+    };
   }
 }

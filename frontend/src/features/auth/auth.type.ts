@@ -2,7 +2,7 @@ export interface UserRoles {
   id: string;
   name: string;
 }
-export interface UserResponse {
+export interface User {
   id: string;
   username: string;
   email: string;
@@ -23,6 +23,13 @@ interface Token {
 }
 
 export interface AuthResponse {
-  user: UserResponse;
+  user: User;
   token: Token;
+}
+
+export interface CurrentUser {
+  user: User | null;
+  isAdmin: boolean;
+  isTenant: boolean;
+  isCustomer: boolean;
 }
