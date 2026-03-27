@@ -11,24 +11,26 @@ export const Navbar = () => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href={"/"}>Home</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/login">Sign In</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/register">Sign Up</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        <NavigationLink href="/" label="Home" />
+        <NavigationLink href="/login" label="Sign In" />
+        <NavigationLink href="/register" label="Sign Up" />
       </NavigationMenuList>
     </NavigationMenu>
+  );
+};
+
+interface NavigationLinkProps {
+  href: string;
+  label: string;
+}
+
+const NavigationLink = ({ label, href }: NavigationLinkProps) => {
+  return (
+    <NavigationMenuItem>
+      <NavigationMenuLink
+        className={navigationMenuTriggerStyle()}
+        render={<Link href={href}>{label}</Link>}
+      />
+    </NavigationMenuItem>
   );
 };
