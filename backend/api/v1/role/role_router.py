@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from core.dependencies.auth import auth_required
+from core.dependencies.users import AdminUserDep
 from core.exceptions import NotImplementedException
 
 router = APIRouter(dependencies=[Depends(auth_required)])
@@ -17,18 +18,20 @@ async def get_roles():
     )
 
 
-@router.get("/{role_id}")
-async def get_role_detial(role_id: UUID):
+@router.get("/{uid}")
+async def get_role_detail(
+    uid: UUID,
+):
 
     raise NotImplementedException(
         message="Role detail endpoint not implemented",
         error_code="ROLE_DETAIL_NOT_IMPLEMENTED",
-        details={"role_id": str(role_id)},
+        details={"uid": str(uid)},
     )
 
 
 @router.post("/")
-async def add_role():
+async def add_role(admin: AdminUserDep):
 
     raise NotImplementedException(
         message="Role creation endpoint not implemented",
@@ -36,8 +39,8 @@ async def add_role():
     )
 
 
-@router.put("/")
-async def update_role():
+@router.put("/{uid}")
+async def update_role(uid: UUID, admin: AdminUserDep):
 
     raise NotImplementedException(
         message="Role update endpoint not implemented",
@@ -45,8 +48,8 @@ async def update_role():
     )
 
 
-@router.patch("/")
-async def partial_update_role():
+@router.patch("/{uid}")
+async def partial_update_role(uid: UUID, user: AdminUserDep):
 
     raise NotImplementedException(
         message="Role partial update endpoint not implemented",
@@ -54,11 +57,11 @@ async def partial_update_role():
     )
 
 
-@router.delete("/{role_id}")
-async def remove_role(role_id: UUID):
+@router.delete("/{uid}")
+async def remove_role(uid: UUID, admin: AdminUserDep):
 
     raise NotImplementedException(
         message="Role deletion endpoint not implemented",
         error_code="ROLE_DELETE_NOT_IMPLEMENTED",
-        details={"role_id": str(role_id)},
+        details={"uid": str(uid)},
     )
