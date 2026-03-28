@@ -89,7 +89,7 @@ class SuperuserBootstrap(BaseController[DBUser]):
             if existing_role:
                 return existing_role
 
-            # Create new super user role
+            # Create new superuser role
             super_user_role = await self.role_repository.create(
                 {"name": "super_user", "description": "SuperUser"}
             )
@@ -110,7 +110,7 @@ class SuperuserBootstrap(BaseController[DBUser]):
             # Hash the password
             hashed_password = self.password_service.hash_password(payload.password)
 
-            # Create the super user account
+            # Create the superuser account
             super_user_account = await self.user_repository.create(
                 {
                     "username": payload.username,

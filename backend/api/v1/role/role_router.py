@@ -2,11 +2,13 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from app.schemas.requests.role import RoleCreateRequest
+from app.schemas.requests.role import (
+    RoleCreateRequest,
+    RolePartialUpdateRequest,
+    RoleUpdateRequest,
+)
 from core.dependencies.auth import auth_required
 from core.dependencies.controllers import RoleControllerDep
-from core.dependencies.users import AdminUserDep
-from core.exceptions import NotImplementedException
 
 router = APIRouter(dependencies=[Depends(auth_required)])
 
@@ -34,23 +36,19 @@ async def create_role(payload: RoleCreateRequest, controller: RoleControllerDep)
 
 
 @router.put("/{uid}")
-async def update_role(uid: UUID, admin: AdminUserDep, controller: RoleControllerDep):
-
-    raise NotImplementedException(
-        message="Role update endpoint not implemented",
-        error_code="ROLE_UPDATE_NOT_IMPLEMENTED",
-    )
+async def update_role(
+    uid: UUID,
+    payload: RoleUpdateRequest,
+    controller: RoleControllerDep,
+):
+    return await controller.update_role(uid, payload)
 
 
 @router.patch("/{uid}")
 async def partial_update_role(
-    uid: UUID, user: AdminUserDep, controller: RoleControllerDep
+    uid: UUID, payload: RolePartialUpdateRequest, controller: RoleControllerDep
 ):
-
-    raise NotImplementedException(
-        message="Role partial update endpoint not implemented",
-        error_code="ROLE_PARTIAL_UPDATE_NOT_IMPLEMENTED",
-    )
+    return await controller.update_role(uid, payload)
 
 
 @router.delete("/{uid}")
