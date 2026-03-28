@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
-import { cache } from "react";
-import { ApiError } from "@/lib/api/api.error";
-import { apiServerClient } from "@/lib/api/api.server";
-import type { CurrentUser, User } from "./auth.type";
+import {redirect} from "next/navigation";
+import {cache} from "react";
+import {ApiError} from "@/lib/api/api.error";
+import {apiServerClient} from "@/lib/api/api.server";
+import type {CurrentUser, User} from "./auth.type";
 
 function hasRole(user: User, role: string): boolean {
   return user.roles.some((r) => r.name.toLowerCase() === role.toLowerCase());
@@ -19,7 +19,7 @@ const GUEST: CurrentUser = {
 function buildCurrentUser(user: User): CurrentUser {
   return {
     authenticated: true,
-    isAdmin: hasRole(user, "admin"),
+    isAdmin: hasRole(user, "admin") || hasRole(user, "super_user"),
     isCustomer: true,
     isTenant: hasRole(user, "tenant"),
     user,
@@ -35,9 +35,10 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser> => {
       error instanceof ApiError &&
       (error.status === 401 || error.status === 403)
     ) {
+      // TODO: Add something to show user's they are unauthenticated
       return GUEST;
     }
-    throw error;
+    return GUEST;
   }
 });
 

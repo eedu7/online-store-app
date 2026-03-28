@@ -4,7 +4,9 @@ import {AdminSidebar} from "@/features/admin/components/admin-sidebar";
 
 export const AdminLayout = ({children}: {children: ReactNode}) => {
     return (
-        <SidebarProvider>
+        <SidebarProvider
+
+        >
             <AdminSidebar/>
             <SidebarInset>
                 {children}

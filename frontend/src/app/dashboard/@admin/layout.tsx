@@ -1,5 +1,3 @@
-export default async function Layout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return children;
-}
+import {AdminLayout} from "@/features/admin/layout/admin-layout";
+
+export default AdminLayout;

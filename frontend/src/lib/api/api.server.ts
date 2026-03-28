@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
-import { buildUrl } from "./api.utils";
 import { ApiError } from "./api.error";
+import { buildUrl } from "./api.utils";
 
 export async function apiServerClient(endpoint: string, init?: RequestInit) {
   const cookieStore = await cookies();
