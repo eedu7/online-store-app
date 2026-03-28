@@ -1,5 +1,4 @@
 from app.controllers import AuthController, RoleController, UserController
-from app.repositories import RoleRepository
 from core.factory.repositories import (
     RoleRepositoryDep,
     UserRepositoryDep,
@@ -32,6 +31,6 @@ class ControllerFactory:
 
     @staticmethod
     def get_roll_controller(
-        repository: RoleRepository,
+        repository: RoleRepositoryDep,
     ) -> RoleController:
         return RoleController(repository=repository)

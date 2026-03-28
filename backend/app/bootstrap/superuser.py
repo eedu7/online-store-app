@@ -39,28 +39,31 @@ class SuperuserBootstrap(BaseController[DBUser]):
             # Verify the bootstrap secret
             await self._verify_bootstrap_secret(secret)
 
-            # Get or create admin role
-            admin_role = await self._get_or_create_admin_role()
+            # Get or create superuser role
+            super_user_role = await self._get_or_create_super_user_role()
 
             # Create the superuser
-            admin_user = await self._create_superuser_account(payload)
+            super_user_account = await self._create_superuser_account(payload)
 
             # Assigning the role
-            await self._assign_role(admin_user, admin_role)
+            await self._assign_role(super_user_account, super_user_role)
 
             # Commit all changes
             await self.commit()
-            await self.refresh(admin_user)
+            await self.refresh(super_user_account)
 
             token_pair = self.jwt_service.build_token_pair(
-                str(admin_user.id),
+                str(super_user_account.id),
                 extra_claims={
-                    "user": {"username": admin_user.username, "email": admin_user.email}
+                    "user": {
+                        "username": super_user_account.username,
+                        "email": super_user_account.email,
+                    }
                 },
             )
 
             return AuthResponse(
-                token=token_pair, user=UserResponse.model_validate(admin_user)
+                token=token_pair, user=UserResponse.model_validate(super_user_account)
             )
 
         except (UnauthorizedException, BadRequestException):
@@ -78,23 +81,23 @@ class SuperuserBootstrap(BaseController[DBUser]):
         ):
             raise UnauthorizedException("Invalid credentials")
 
-    async def _get_or_create_admin_role(self) -> DBRole:
+    async def _get_or_create_super_user_role(self) -> DBRole:
         try:
             existing_role = await self.role_repository.get_one_by_filters(
-                {"name": "admin"}
+                {"name": "super_user"}
             )
             if existing_role:
                 return existing_role
 
-            # create new admin role
-            admin_role = await self.role_repository.create(
-                {"name": "admin", "description": "System Administration"}
+            # Create new super user role
+            super_user_role = await self.role_repository.create(
+                {"name": "super_user", "description": "SuperUser"}
             )
 
             await self.flush()
-            return admin_role
+            return super_user_role
         except Exception:
-            raise InternalServerException("Failed to initialize admin role")
+            raise InternalServerException("Failed to initialize 'super user' role")
 
     async def _create_superuser_account(self, payload: SuperuserInRequest) -> DBUser:
         try:
@@ -107,8 +110,8 @@ class SuperuserBootstrap(BaseController[DBUser]):
             # Hash the password
             hashed_password = self.password_service.hash_password(payload.password)
 
-            # Create the admin user
-            admin_user = await self.user_repository.create(
+            # Create the super user account
+            super_user_account = await self.user_repository.create(
                 {
                     "username": payload.username,
                     "email": payload.email,
@@ -120,7 +123,7 @@ class SuperuserBootstrap(BaseController[DBUser]):
             )
             await self.flush()
 
-            return admin_user
+            return super_user_account
 
         except BadRequestException:
             raise
