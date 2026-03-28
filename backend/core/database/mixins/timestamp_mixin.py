@@ -18,7 +18,3 @@ class TimestampMixin:
         nullable=False,
         sort_order=16,
     )
-
-    deleted_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True, sort_order=16
-    )

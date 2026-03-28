@@ -1,8 +1,10 @@
+from uuid import UUID
+
 from app.models import DBRole, DBUser
 from app.repositories import RoleRepository
 from app.schemas.requests.role import RoleCreateRequest
 from core.controller import BaseController
-from core.exceptions import BadRequestException
+from core.exceptions import BadRequestException, NotFoundException
 
 
 class RoleController(BaseController[DBRole]):
@@ -13,21 +15,28 @@ class RoleController(BaseController[DBRole]):
     async def create_role(
         self,
         payload: RoleCreateRequest,
-        user: DBUser,
     ):
         try:
-            return await self.repository.create(
-                {
-                    **payload.model_dump(),
-                    "created_by": user.id,
-                    "updated_by": user.id,
-                }
+            role = await self.repository.create(
+                payload.model_dump(),
             )
+            await self.commit()
+            return role
+
         except Exception as exc:
             raise BadRequestException(details={"role": str(exc)})
 
     async def update_role(self):
         pass
 
-    async def delete_role(self):
-        pass
+    async def delete_role(self, uid: UUID) -> None:
+        role = await self.repository.get_by_id(uid)
+
+        if role is None:
+            raise NotFoundException(details={"role": str(uid)})
+        try:
+            await self.repository.delete(role)
+
+            await self.commit()
+        except Exception as exc:
+            raise BadRequestException(details={"role": str(exc)})

@@ -30,6 +30,6 @@ def _require_roles(*allowed_roles: str):
     return role_checker
 
 
-AdminUserDep = Annotated[DBUser, Depends(_require_roles("admin"))]
+AdminUserDep = Annotated[DBUser, Depends(_require_roles("admin", "super_user"))]
 TenantUserDep = Annotated[DBUser, Depends(_require_roles("tenant"))]
 StaffUserDep = Annotated[DBUser, Depends(_require_roles("staff"))]
