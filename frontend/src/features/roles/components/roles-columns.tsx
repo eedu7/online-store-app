@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type {Role} from "@/features/roles/roles.types";
+import {formatDate} from "@/lib/utils";
 
 export const RoleColumns: ColumnDef<Role>[] = [
   {
@@ -49,10 +50,12 @@ export const RoleColumns: ColumnDef<Role>[] = [
   },
   {
     accessorKey: "created_at",
+    cell: ({ row }) => formatDate(row.original.created_at),
     header: "Created",
   },
   {
     accessorKey: "updated_at",
+    cell: ({ row }) => formatDate(row.original.updated_at),
     header: "Updated",
   },
   {

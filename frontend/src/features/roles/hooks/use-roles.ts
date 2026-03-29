@@ -1,19 +1,25 @@
-import {useQuery} from "@tanstack/react-query";
-import type {Role} from "@/features/roles/roles.types";
-import {apiServerClient} from "@/lib/api/api.server";
+import { useQuery } from "@tanstack/react-query";
+import type { Role } from "@/features/roles/roles.types";
+import { apiBrowserClient } from "@/lib/api/api.client";
 
-const createRole = () => {};
-const getRoles = () =>
+const useCreateRole = () => {};
+const useGetRoles = () =>
   useQuery({
     queryFn: async (): Promise<Role[]> => {
-      return await apiServerClient("/roles", {
+      return await apiBrowserClient("/roles", {
         method: "GET",
       });
     },
     queryKey: ["roles", "use-roles"],
   });
-const getRoleById = () => {};
-const updateRole = () => {};
-const deleteRole = () => {};
+const useGetRoleById = () => {};
+const useUpdateRole = () => {};
+const useDeleteRole = () => {};
 
-export { createRole, deleteRole, getRoleById, getRoles, updateRole };
+export {
+  useCreateRole,
+  useDeleteRole,
+  useGetRoleById,
+  useGetRoles,
+  useUpdateRole,
+};
