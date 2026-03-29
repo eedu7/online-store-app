@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {useRoleStore} from "@/features/roles/roles.store";
 import type {Role} from "@/features/roles/roles.types";
 import {formatDate} from "@/lib/utils";
 
@@ -61,6 +62,7 @@ export const RoleColumns: ColumnDef<Role>[] = [
   {
     cell: ({ row }) => {
       const role = row.original;
+      const { setOpen, setRole } = useRoleStore();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -79,11 +81,22 @@ export const RoleColumns: ColumnDef<Role>[] = [
                 <HugeiconsIcon icon={CopyFreeIcons} />
                 Copy role ID
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setRole(role);
+                  setOpen("edit");
+                }}
+              >
                 <HugeiconsIcon icon={Edit02FreeIcons} />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem
+                onClick={() => {
+                  setRole(role);
+                  setOpen("delete");
+                }}
+                variant="destructive"
+              >
                 <HugeiconsIcon icon={Delete01FreeIcons} />
                 Delete
               </DropdownMenuItem>

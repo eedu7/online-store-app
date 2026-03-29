@@ -1,7 +1,7 @@
 import {create} from "zustand";
 import type {Role} from "@/features/roles/roles.types";
 
-type Modal = "edit" | "delete" | null;
+type Modal = "create" | "edit" | "delete" | null;
 
 interface RoleStore {
   open: Modal;
