@@ -1,5 +1,5 @@
-import {create} from "zustand";
-import type {Role} from "@/features/roles/roles.types";
+import { create } from "zustand";
+import type { Role } from "@/features/roles/roles.types";
 
 type Modal = "create" | "edit" | "delete" | null;
 

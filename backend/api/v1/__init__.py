@@ -9,5 +9,5 @@ router = APIRouter()
 
 router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 router.include_router(user_router, prefix="/users", tags=["User Management"])
-router.include_router(role_router, prefix="/role", tags=["Role Management"])
+router.include_router(role_router, prefix="/roles", tags=["Role Management"])
 router.include_router(bootstrap_router, prefix="/bootstrap", tags=["Bootstrap"])
